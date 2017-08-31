@@ -153,7 +153,7 @@ type Node{T}
     parent::Nullable{Node}
     f::Float64
 
-    function Node{T}(state::T; parent::Union{Void, Node}=nothing, action::Union{Void, String, Int64, Tuple}=nothing, path_cost::Float64=0.0, f::Union{Void, Float64}=nothing)
+    function Node{T}(state::T; parent::Union{Void, Node}=nothing, action::Union{Void, String, Int64, Tuple}=nothing, path_cost::Float64=0.0, f::Union{Void, Float64}=nothing) where T
         nn = new(state, path_cost, UInt32(0), Nullable(action), Nullable{Node}(parent));
         if (typeof(parent) <: Node)
             nn.depth = UInt32(parent.depth + 1);
@@ -544,7 +544,7 @@ type Graph{N}
     locations::Dict{N, Tuple{Any, Any}}
     directed::Bool
 
-    function Graph{N}(;dict::Union{Void, Dict{N, }}=nothing, locations::Union{Void, Dict{N, Tuple{Any, Any}}}=nothing, directed::Bool=true)
+    function Graph{N}(;dict::Union{Void, Dict{N, }}=nothing, locations::Union{Void, Dict{N, Tuple{Any, Any}}}=nothing, directed::Bool=true) where N
         local ng::Graph;
         if ((typeof(dict) <: Void) && (typeof(locations) <: Void))
             ng = new(Dict{Any, Any}(), Dict{Any, Tuple{Any, Any}}(), Bool(directed));
@@ -557,7 +557,7 @@ type Graph{N}
         return ng;
     end
 
-    function Graph{N}(graph::Graph{N})
+    function Graph{N}(graph::Graph{N}) where N
         return new(Dict{Any, Any}(graph.dict), Dict{String, Tuple{Any, Any}}(graph.locations), Bool(graph.directed));
     end
 end
@@ -1224,8 +1224,8 @@ function compare_searchers{T <: AbstractProblem}(problems::Array{T, 1},
                                                                             iterative_deepening_search,
                                                                             depth_limited_search,
                                                                             recursive_best_first_search])
-    local table = vcat(permutedims(hcat(header), [2, 1]), 
-                        hcat(map(string, searchers), 
+    local table = vcat(permutedims(hcat(header), [2, 1]),
+                        hcat(map(string, searchers),
                             permutedims(reduce(hcat,
                                 collect(
                                     collect(format_instrumented_results(execute_searcher(s, p)) for p in problems)
@@ -1237,4 +1237,3 @@ end
 function beautify_node(n::Node)
     return @sprintf("%s%s%s", "<Node ", string(n.state), ">");
 end
-

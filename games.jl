@@ -7,7 +7,7 @@ export AbstractGame, Figure52Game, TicTacToeGame, ConnectFourGame,
         display,
         random_player, alphabeta_player, play_game;
 
-abstract AbstractGame;
+abstract type AbstractGame end;
 
 #=
 
@@ -217,7 +217,7 @@ function k_in_row(game::TicTacToeGame, board::Dict, move::Tuple{Signed, Signed},
     return n >= game.k;
 end
 
-typealias ConnectFourState TicTacToeState;
+const ConnectFourState = TicTacToeState;
 
 #=
 
@@ -383,7 +383,7 @@ Search the given game to find the best action using alpha-beta pruning (Fig 5.7)
 """
 function alphabeta_full_search{T <: AbstractGame}(state::String, game::T)
 	local player::String = to_move(game, state);
-    return argmax(actions(game, state), 
+    return argmax(actions(game, state),
                     (function(action::String,; relevant_game::AbstractGame=game, relevant_state::String=state, relevant_player::String=player)
                         return alphabeta_full_search_min_value(relevant_game, relevant_player, result(relevant_game, relevant_state, action), -Inf64, Inf64);
                     end));
@@ -520,4 +520,3 @@ function play_game{T <: AbstractGame}(game::T, players::Vararg{Function})
         end
     end
 end
-

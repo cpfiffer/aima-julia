@@ -24,7 +24,7 @@ export hash, ==, show,
         fol_bc_ask,
         is_number, differentiate, simplify, differentiate_simplify;
 
-abstract AgentProgram;      #declare AgentProgram as a supertype for AgentProgram implementations
+abstract type AgentProgram end;      #declare AgentProgram as a supertype for AgentProgram implementations
 
 immutable Expression
 	operator::String
@@ -69,7 +69,7 @@ function show(io::IO, e::Expression)
     nothing;
 end
 
-abstract AbstractKnowledgeBase;
+abstract type AbstractKnowledgeBase end;
 
 function tell{T <: AbstractKnowledgeBase}(kb::T, e::Expression)
     println("tell() is not implemented yet for ", typeof(kb), "!");
@@ -462,7 +462,7 @@ end
 function translate_to_sat{T}(initial::T, transition::Dict, goal::T, time::Int64, state_dict::Dict, action_dict::Dict)
     local clauses::Array{Expression, 1} = Array{Expression, 1}();
     local states::AbstractVector = collect(keys(transition));
-    local state_count_iterator = countfrom();
+    local state_count_iterator = Iterators.countfrom();
     local state_number::Int64 = -1;
     for state in states
         for t in 0:time
@@ -472,7 +472,7 @@ function translate_to_sat{T}(initial::T, transition::Dict, goal::T, time::Int64,
     end
     push!(clauses, state_dict[(initial, 0)]);
     push!(clauses, state_dict[(goal, time)]);
-    local transition_count_iterator = countfrom();
+    local transition_count_iterator = Iterators.countfrom();
     local transition_number = -1;
     for state in states
         for action in keys(transition[state])
@@ -1093,7 +1093,7 @@ function substitute(dict::Dict, e::Expression)
 end
 
 # This number is used to generate new variables in standardize_variables().
-standardize_variables_counter = [countfrom(BigInt(1)), BigInt(-1)];
+standardize_variables_counter = [Iterators.countfrom(BigInt(1)), BigInt(-1)];
 
 function standardize_variables(e, counter::AbstractVector; dict::Union{Void, Dict}=nothing)
     return e;
@@ -1132,7 +1132,7 @@ function fol_fc_ask(kb::FirstOrderLogicKnowledgeBase, alpha::Expression)
             # Generate p_prime using unimplemented invert_literals() function.
             for p_prime in fetch(invert_literals(kb.clauses))
                 # generate_thetas() is an unimplmented function that generates substitutions
-                # such that each dictionary of substitution 's' fulfills 
+                # such that each dictionary of substitution 's' fulfills
                 # (substitute(s, p) == substitute(s, p_prime))
                 for theta in generate_thetas(p, p_prime)
                     q_prime = substitute(theta, q);
@@ -1196,7 +1196,7 @@ end
 """
     fol_bc_ask(kb, query)
 
-Use a simple backward-chaining algorithm (Fig. 9.6) for first-order knowledge bases 
+Use a simple backward-chaining algorithm (Fig. 9.6) for first-order knowledge bases
 on the given knowledge base and atomic sentence 'query' to return an array of
 dictionaries of substitutions.
 """
@@ -1439,7 +1439,7 @@ function identify_tokens(s::String)
             end
             push!(current_string, character);
             isOperator = true;
-        else    #found new symbol  
+        else    #found new symbol
             if (isOperator) #first character of new token
                 push!(queue, strip(String(current_string)));
                 current_string = Array{Char, 1}([]);
@@ -1465,7 +1465,7 @@ function identify_tokens(s::String)
 end
 
 #Parenthesize any arguments that are not enclosed by parentheses
-function parenthesize_arguments(tokens::AbstractVector) 
+function parenthesize_arguments(tokens::AbstractVector)
     local existing_parenthesis::Int64 = 0;
     local comma_indices::Array{Int64, 1} = Array{Int64, 1}([]);
     #keep track of opening and closing parentheses indices
@@ -1631,7 +1631,7 @@ function construct_expression_tree(tokens::AbstractVector)
         elseif (token == ",")
             if (!isnull(current_node.value) && get(current_node.value) != ",")
                 notFound = true;
-                
+
                 new_intermediate_node = ExpressionNode(val=token, parent=get(current_node.parent));
                 for (i, c) in enumerate(get(current_node.parent).children)
                     if (c == current_node)
@@ -1644,7 +1644,7 @@ function construct_expression_tree(tokens::AbstractVector)
                 if (notFound)
                     error("ConstructExpressionTreeError: could not find existing child node!");
                 end
-                
+
 
                 current_node.parent = Nullable{ExpressionNode}(new_intermediate_node);
                 push!(new_intermediate_node.children, current_node);
@@ -1836,4 +1836,3 @@ function pretty_set(s::Set{Expression})
                                                 return isless(e1.operator, e2.operator);
                                             end))));
 end
-

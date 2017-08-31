@@ -18,9 +18,9 @@ export AbstractPDDL,
         HighLevelPDDL, refinements, hierarchical_search,
         job_shop_scheduling_pddl, job_shop_scheduling_pddl_goal_test;
 
-abstract AbstractPDDL;
+abstract type AbstractPDDL end;
 
-abstract AbstractPlanningAction;
+abstract type AbstractPlanningAction end;
 
 #=
 
@@ -910,7 +910,7 @@ end
     schemas, and the goal test found in the PDDL datatype.
 
 =#
-type HighLevelPDDL <: AbstractPDDL 
+type HighLevelPDDL <: AbstractPDDL
     kb::FirstOrderLogicKnowledgeBase
     actions::Array{PlanningHighLevelAction, 1}
     goal_test::Function
@@ -977,8 +977,8 @@ end
 """
     hierarchical_search(problem, hierarchy)
 
-Use the breadth-first implementation of the Hierarchical Search algorithm (Fig. 11.5) to the 
-given high-level planning problem 'problem' and 'hierarchy'. Return the solution or 'nothing' 
+Use the breadth-first implementation of the Hierarchical Search algorithm (Fig. 11.5) to the
+given high-level planning problem 'problem' and 'hierarchy'. Return the solution or 'nothing'
 on failure.
 """
 function hierarchical_search(problem::HighLevelPDDL, hierarchy)
@@ -1100,4 +1100,3 @@ function job_shop_scheduling_pddl()
     local job_group_2::Array{PlanningHighLevelAction, 1} = [add_engine_2, add_wheels_2, inspect_2];
     return HighLevelPDDL(initial, [add_engine_1, add_engine_2, add_wheels_1, add_wheels_2, inspect_1, inspect_2], job_shop_scheduling_pddl_goal_test, jobs=[job_group_1, job_group_2], resources=resources);
 end
-

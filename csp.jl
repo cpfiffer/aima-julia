@@ -17,7 +17,7 @@ export ConstantFunctionDict, CSPDict, CSP, NQueensCSP, SudokuCSP, ZebraCSP,
 type ConstantFunctionDict{V}
     value::V
 
-    function ConstantFunctionDict{V}(val::V)
+    function ConstantFunctionDict{V}(val::V) where V
         return new(val);
     end
 end
@@ -51,7 +51,7 @@ function getkey(dict::CSPDict, key, default)
         return getkey(get(dict.dict), key, default);
     end
 end
- 
+
 function get(dict::CSPDict, key, default)
     if (eltype(dict.dict) <: ConstantFunctionDict)
         return get(dict.dict).value;
@@ -81,13 +81,13 @@ function in(pair::Pair, dict::CSPDict)
     end
 end
 
-abstract AbstractCSP <: AbstractProblem;
+abstract type AbstractCSP <: AbstractProblem end;
 
 #=
 
     CSP is a Constraint Satisfaction Problem implementation of AbstractProblem and AbstractCSP.
 
-    This problem contains an unused initial state field to accommodate the requirements 
+    This problem contains an unused initial state field to accommodate the requirements
 
     of some search algorithms.
 
@@ -326,7 +326,7 @@ end
 function least_constraining_values{T <: AbstractCSP}(problem::T, var, assignment::Dict)
     return sort!(deepcopy(choices(problem, var)),
                 lt=(function(val)
-                       return nconflicts(problem, var, val, assignment);                                 
+                       return nconflicts(problem, var, val, assignment);
                     end));
 end
 
@@ -681,7 +681,7 @@ type SudokuInitialState
     cols::AbstractVector
 
     function SudokuInitialState()
-        local index_iter = countfrom();
+        local index_iter = Iterators.countfrom();
         local index_position::AbstractVector = [0];
         local index_grid = collect(collect(collect(collect((function(it, ip)
                                                                 ip[1]=next(it, ip[1])[2];
@@ -757,7 +757,7 @@ function display(problem::SudokuCSP, assignment::Dict)
                                                             row), " ")
                                                     for row in box);
                                 end),
-                                box_row)), "\n") 
+                                box_row)), "\n")
                     for box_row in sudoku_indices.index_grid),
             "\n------+-------+------\n");
 end
@@ -887,4 +887,3 @@ function solve_zebra(problem::ZebraCSP, algorithm::Function; kwargs...)
     end
     return answer["Zebra"], answer["Water"], problem.nassigns, answer;
 end
-

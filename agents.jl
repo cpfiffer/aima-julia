@@ -30,7 +30,7 @@ export AgentProgram,
 
     Define a global execute() function to be implemented for each respective
     AgentProgram DataType implementation.
-        
+
 =#
 
 function execute{T <: AgentProgram}(ap::T, p::Tuple{Any, Any})      #implement functionality later
@@ -127,10 +127,10 @@ end
 
 =#
 
-abstract EnvironmentObject;         #declare EnvironmentObject as a supertype for EnvironmentObject implementations
+abstract type EnvironmentObject end;         #declare EnvironmentObject as a supertype for EnvironmentObject implementations
 
 #the EnvironmentAgent implementations exist in the environment like other EnvironmentObjects such as Gold or Dirt
-abstract EnvironmentAgent <: EnvironmentObject;
+abstract type EnvironmentAgent <: EnvironmentObject end;
 
 type Agent <: EnvironmentAgent
     alive::Bool
@@ -219,7 +219,7 @@ end
 
 =#
 
-abstract Obstacle <: EnvironmentObject
+abstract type Obstacle <: EnvironmentObject end
 
 type Wall <: Obstacle
     location::Tuple{Any, Any}
@@ -437,9 +437,9 @@ function RandomVacuumAgent()
     return Agent(RandomAgentProgram(["Right", "Left", "Suck", "NoOp"]));
 end
 
-abstract Environment;               #declare Environment as a supertype for Environment implementations
+abstract type Environment end;               #declare Environment as a supertype for Environment implementations
 
-abstract TwoDimensionalEnvironment <: Environment;
+abstract type TwoDimensionalEnvironment <: Environment end;
 
 #XYEnvironment is a 2-dimensional Environment implementation with obstacles.
 #Agents perceive their location as a tuple of objects within perceptible_distance radius.

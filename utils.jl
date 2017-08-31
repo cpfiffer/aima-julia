@@ -66,7 +66,7 @@ function vector_add_tuples(a::Tuple, b::Tuple)
     return map(+, a, b);
 end
 
-abstract AbstractProblem;
+abstract type AbstractProblem end;
 
 RandomDeviceInstance = RandomDevice();
 
@@ -78,7 +78,7 @@ RandomDeviceInstance = RandomDevice();
 
 =#
 
-abstract Queue;
+abstract type Queue end;
 
 #=
 
